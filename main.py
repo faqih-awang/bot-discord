@@ -1,36 +1,38 @@
 import discord
-# from settings import whatsurproblem
+from settings import TOKEN
 from bot_code import *
+from discord.ext import commands
+
 
 # Variabel intents menyimpan hak istimewa bot
 intents = discord.Intents.default() 
 # Mengaktifkan hak istimewa message-reading
 intents.message_content = True
 # Membuat bot di variabel klien dan mentransfernya hak istimewa
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='$', intents=intents)
 
-@client.event
+@bot.event
 async def on_ready():
     print(f'Kita telah masuk sebagai {client.user}')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content.startswith('halo'):
-        await message.channel.send("Hi!")
-    elif message.content.startswith('emoji'):
-        await message.channel.send(random_emoji())
-    elif message.content.startswith('flip'):
-        await message.channel.send(flip_coin())
-    elif message.content.startswith('roll'):
-        await message.channel.send(roll_dice())
-    elif message.content.startswith('bye'):
-        await message.channel.send(":wave:")
-    elif message.content.startswith('generate'):
-        await message.channel.send(password_gen(10))
-    else:
-        await message.channel.send(message.content)
+@bot.command()
+async def hello(ctx):
+    await ctx.send("Hi!")
 
+@bot.command()
+async def generate_pass(ctx, passlength = 10):
+    await ctx.send(password_gen(passlength))
 
-client.run("MTEyNDk2MjU1ODMxNTYwMjAwMg.GUOrlA.qdqxVnnpBwC6kQ2UyET-yIk-1KMHTqEs5z6wzw")
+@bot.command()
+async def emoji_random(ctx):
+    await ctx.send(random_emoji())
+
+@bot.command()
+async def dice_roll(ctx):
+    await ctx.send(roll_dice())
+
+@bot.command()
+async def coin_flip(ctx):
+    await ctx.send(flip_coin())
+
+bot.run(TOKEN)
